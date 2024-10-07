@@ -1,23 +1,28 @@
 fn main() {
-    println!("Hello {0}, How Are you? {1} to see you!", "Anurag", "Glad");
-    let x = 5 + /* 90 + */ 5;
-    println!("Is `x` 10 or 100? x = {}", x);
-    println!("Base 10:               {}",   69420); // 69420
-    println!("Base 2 (binary):       {:b}", 69420); // 10000111100101100
-    println!("Base 8 (octal):        {:o}", 69420); // 207454
-    println!("Base 16 (hexadecimal): {:x}", 69420); // 10f2c
-    println!("{number:>5}", number=1);
+    //     let _sentence: String = String::from("Hello World!, Here I come");
+    //     let first_word = get_first_word(_sentence);
+    //     let n = 1000;
+    //     for i in 0..n {
+    //         println!("Loop No: {}", i);
+    //     }
+    //     println!("The first word is : {} ", first_word);
+    // }
 
-    #[allow(dead_code)] // disable `dead_code` which warn against unused module
-    struct Structure(i32);
+    // pub fn get_first_word(my_str: String) -> String {
+    //     let mut ans: String = String::from("");
+    //     for char in my_str.chars() {
+    //         // ans.push(char);
+    //         ans.push_str(char.to_string().as_str());
+    //         if char == ' ' {
+    //             break;
+    //         }
+    //     }
+    //     return ans;
+    let a = 5;
+    let b = 10;
+    println!("The sum of {} and {} is {}", a, b, do_sum(a, b));
+}
 
-    // This will not compile because `Structure` does not implement
-    // fmt::Display.
-    // println!("This struct `{}` won't print...", Structure(3));
-    // TODO ^ Try uncommenting this line
-
-    let number: f64 = 1.0;
-    let width: usize = 5;
-    println!("{number:>width$}");
-    println!("The value of Pi is {}",3.14)
+pub fn do_sum(a: i32, b: i32) -> i32 {
+    return a + b;
 }
