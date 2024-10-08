@@ -1,9 +1,16 @@
-fn main() {
-    let str:String = String::from("Hello New AI World!");
-    let n = get_string_length(str);
-    println!("The length of string is {}",n);
+enum Direction {
+    North,
+    East,
+    West,
+    South,
 }
 
-fn get_string_length(str:String) -> usize {
-    return str.chars().count();
+fn main() {
+    let my_direction = Direction::North;
+    let new_direction = my_direction;
+    move_around(new_direction);
+}
+
+fn move_around(direction: Direction) {
+    // Implement
 }
