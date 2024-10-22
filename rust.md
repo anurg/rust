@@ -112,3 +112,85 @@ fn main() {
     }
 }
 ```
+### Options/Result Enum (Provided by Rust)
+Options - for Null Handling returns Some(T) or None
+
+```
+use std::ops::Index;
+
+fn main() {
+    let str: String = String::from(" Hello, How are you?");
+    let position = find_first_a(str);
+    match position {
+        Some(i) => println!(" a found at {}", i),
+        None => println!("a Not Found!"),
+    }
+}
+
+fn find_first_a(str: String) -> Option<i32> {
+    for (index, char) in str.chars().enumerate() {
+        if char == 'a' {
+            return Some(index as i32);
+        }
+    }
+    return None;
+}
+
+```
+- Custom Option Enum Example
+```
+enum CustomOption {
+    Some(i32),
+    None,
+}
+fn main() {
+    let str: String = String::from(" Hello, How are you?");
+    let position = find_first_a(str);
+    match position {
+        CustomOption::Some(i) => println!(" a found at {}", i),
+        CustomOption::None => println!("a Not Found!"),
+    }
+}
+
+fn find_first_a(str: String) -> CustomOption {
+    for (index, char) in str.chars().enumerate() {
+        if char == 'a' {
+            return CustomOption::Some(index as i32);
+        }
+    }
+    return CustomOption::None;
+}
+
+```
+Result - for Error handling return ok(T) or Err(Error)
+```
+// Write a function that reads the content of a file.
+use std::fs::read_to_string;
+fn main() {
+    let file = read_to_string("file.txt");
+    match file {
+        Ok(str) => println!("The content of file: {:?} ", str),
+        Err(error_message) => println!("The Error Message {:?}", error_message),
+    }
+}
+```
+
+### Package Management
+External packages are called crates.
+```
+cargo add chrono
+```
+```
+use chrono::{Local, Utc};
+fn main() {
+    // UTC time
+    let now = Utc::now();
+    println!("The time right now is {} ", now);
+    //local Time
+    let local = Local::now();
+    println!("The Local time now is {}", local);
+    //Fomratted UTC Time
+    let formatted = now.format("%Y-%m-%d %H:%M:%S");
+    println!("Formatted Date & Time is {}", formatted);
+}
+```

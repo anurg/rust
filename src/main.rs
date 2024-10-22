@@ -1,18 +1,14 @@
-enum Shape {
-    Rectangle(f64, f64), //width,height
-    Circle(f64),         //radius
-}
+use chrono::{Local, Utc};
 fn main() {
-    let rec: Shape = Shape::Rectangle(10.0, 15.0);
-    println!("Recatangle Area: {} ", calaculate_area(rec));
-
-    let circle = Shape::Circle(5.0);
-    println!("Recatangle Area: {} ", calaculate_area(circle));
-
-    fn calaculate_area(shape: Shape) -> f64 {
-        match shape {
-            Shape::Rectangle(width, height) => width * height,
-            Shape::Circle(radius) => 3.14 * radius * radius,
-        }
-    }
+    // UTC time
+    let now = Utc::now();
+    println!("The time right now is {} ", now);
+    //local Time
+    let local = Local::now();
+    println!("The Local time now is {}", local);
+    //Fomratted UTC Time
+    let formatted = now.format("%Y-%m-%d %H:%M:%S");
+    println!("Formatted Date & Time is {}", formatted);
 }
+
+### Memory Management
