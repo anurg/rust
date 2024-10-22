@@ -1,29 +1,18 @@
+enum Shape {
+    Rectangle(f64, f64), //width,height
+    Circle(f64),         //radius
+}
 fn main() {
-    struct Rect {
-        width: i32,
-        height: i32,
-    }
-    let rec = Rect {
-        width: 15,
-        height: 10,
-    };
-    impl Rect {
-        fn area(&self) -> i32 {
-            self.width * self.height
-        }
-        fn permimeter(&self) -> i32 {
-            return (self.width + self.height) * 2;
+    let rec: Shape = Shape::Rectangle(10.0, 15.0);
+    println!("Recatangle Area: {} ", calaculate_area(rec));
+
+    let circle = Shape::Circle(5.0);
+    println!("Recatangle Area: {} ", calaculate_area(circle));
+
+    fn calaculate_area(shape: Shape) -> f64 {
+        match shape {
+            Shape::Rectangle(width, height) => width * height,
+            Shape::Circle(radius) => 3.14 * radius * radius,
         }
     }
-    let area: i32 = rec.area();
-    println!(
-        " The Area of Rectanngle with width: {}, height: {} is {}",
-        rec.width, rec.height, area
-    );
-    println!(
-        " The Permimeter of Rectanngle with width: {}, height: {} is {}",
-        rec.width,
-        rec.height,
-        rec.permimeter()
-    );
 }
