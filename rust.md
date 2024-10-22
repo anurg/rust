@@ -1,3 +1,12 @@
+### Rust Notes
+
+### Rust Variables
+
+### Rust Control Statements
+
+### Structs & Ijmplementation
+
+```
 fn main() {
     struct Rect {
         width: i32,
@@ -27,3 +36,6 @@ fn main() {
         rec.permimeter()
     );
 }
+
+```
+
