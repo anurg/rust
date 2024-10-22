@@ -194,3 +194,18 @@ fn main() {
     println!("Formatted Date & Time is {}", formatted);
 }
 ```
+### Memory Management
+
+### Heaps & Stack
+Stack is memeory where we keep static data - i.e. size of data does not inncrease
+Heap is memory where we keep dynamic data - size of data can increase.
+![rust_stack_heap](images/Rust_stack_heap.jpg)
+
+![rust_stack_heap](images/Rust_stack_heap1.jpg)
+
+### Mutability
+- All variables in RUST are by default immutable.
+- To make the variable mutable 
+```
+let mut var_temp:i32 = 10;
+```
