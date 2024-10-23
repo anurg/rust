@@ -431,3 +431,39 @@ fn main() {
 ```
 
 ### Iterators
+```
+
+fn main() {
+    let nums= vec![1,2,3,4,5];
+    for val in nums {
+        println!("{:?}",val);
+    }
+}
+```
+```
+
+fn main() {
+    let nums= vec![1,2,3,4,5];
+    let iter = nums.iter();
+    for val in iter {
+        println!("{:?}",val);
+    }
+    println!("{:?}",nums);
+}
+```
+### Mutable Iterators (iter_mut)
+```
+fn main() {
+    let mut nums= vec![1,2,3,4,5];
+    let iter = nums.iter_mut();
+    for val in iter {
+        *val = *val * 2;
+    }
+    println!("{:?}",nums);
+}
+```
+### Iterate using .next
+```
+
+```
+
