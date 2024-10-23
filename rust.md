@@ -351,5 +351,83 @@ fn even_filter(vec: Vec<i32>) -> Vec<i32> {
 ```
 - Another approach
 ```
+fn main() {
+    
+    let mut v = vec![1, 2, 3, 4, 5, 6, 7, 8];
+    println!("{:?}", v);
+    println!("{:?}", even_filter(&mut v));
+}
+
+fn even_filter(vec: &mut Vec<i32>) -> &mut Vec<i32> {
+    let mut i= 0;
+    while i < vec.len() {
+        if vec[i] % 2 != 0 {
+            vec.remove(i);
+        } else {
+            i +=1;
+        }
+    }
+    return vec;
+}
 
 ```
+
+### Hashmaps
+- Hashmaps stores key value in Rust.
+
+```
+use std::collections::HashMap;
+fn main() {
+    let mut hmap = HashMap::new();
+    hmap.insert("harkirat", 28);
+    hmap.insert("Anurag", 50);
+    let result = hmap.get("Anuraga");
+    match result {
+        Some(age)=> println!("{}",age),
+        None=>println!("Not Found"),
+    }
+}
+```
+- Another way
+```
+fn main() {
+    let pairs = vec![
+        (String::from("harkirat"),28),
+        (String::from("Anurag"),50)
+        ];
+
+    let grouped_pairs = group_value_by_key(pairs);
+    for (key,val) in &grouped_pairs {
+        println!("Key: {}, Value: {}",key,val);
+    }
+    println!("{:?}",&grouped_pairs);
+
+}
+```
+```
+use std::collections::HashMap;
+
+
+fn group_value_by_key(pairs:Vec<(String,i32)>) -> HashMap<String,i32> {
+    let mut hmap = HashMap::new();
+    for (key,val) in pairs {
+        hmap.insert(key, val);
+    }
+    return hmap;
+}
+fn main() {
+    let pairs = vec![
+        (String::from("harkirat"),28),
+        (String::from("Anurag"),50)
+        ];
+
+    let grouped_pairs = group_value_by_key(pairs);
+    for (key,val) in &grouped_pairs {
+        println!("Key: {}, Value: {}",key,val);
+    }
+    println!("{:?}",&grouped_pairs);
+
+}
+```
+
+### Iterators
