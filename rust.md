@@ -209,3 +209,147 @@ Heap is memory where we keep dynamic data - size of data can increase.
 ```
 let mut var_temp:i32 = 10;
 ```
+### No Return in function
+If no return type is specified for a function, it returns an empty tuple, also known as a unit.
+An empty tuple is represented by ().
+```
+fn make_nothing() -> () {
+    return ();
+}
+
+// the return type is implied as ()
+fn make_nothing2() {
+    // this function will return () if nothing is specified to return
+}
+
+fn main() {
+    let a = make_nothing();
+    let b = make_nothing2();
+
+    // Printing a debug string for a and b
+    // Because it's hard to print nothingness
+    println!("The value of a: {:?}", a);
+    println!("The value of b: {:?}", b);
+}
+
+```
+
+### Functions returning multiple values
+Functions can return multiple values by returning a tuple of values.Tuple elements 
+can be referenced by their index number.Rust supports various kinds of destructuring 
+, allowing us to extract sub-pieces of data structures in ergonomic ways.
+```
+fn swap(x: i32, y: i32) -> (i32, i32) {
+    return (y, x);
+}
+
+fn main() {
+    // return a tuple of return values
+    let result = swap(123, 321);
+    println!("{} {}", result.0, result.1);
+
+    // destructure the tuple into two variables names
+    let (a, b) = swap(result.0, result.1);
+    println!("{} {}", a, b);
+}
+```
+
+### Ownership, Moving, Borrowing, References
+- In RUST, when you assign variable to another variable, or Pass it as function argument, then the ownership changes and the old variable is dropped off memory (Heap). This is called Moving.
+- - Many variable can take immutable reference by using &var_name
+- Only One can take mutable reference by using &mut var_name
+- if mutable refernce is taken, then not even one can take immutable reference
+- This is called Borrowing
+- References must always be valid.
+```
+fn create_string() -> String {
+    let mut s1 = String::from("Hello World!");
+    let s2: &mut String = &mut s1;
+    s2.push('A');
+    s2.push('n');
+    s2.push('u');
+    s2.push('r');
+    s2.push('a');
+    s2.push('g');
+    return s2.to_string();
+}
+fn main() {
+    let s = create_string();
+    println!("The returned String is : {}", s);
+}
+```
+### Passing as function Argument (Code gives error, Borrow of moved value)
+```
+fn create_string() {
+    let s1 = String::from("Hello World!");
+    print_string(s1);
+    println!("{}", s1);
+}
+fn print_string(s2: String) {
+    println!("{}", s2)
+}
+fn main() {
+    create_string();
+}
+```
+- Correct Code
+```
+fn create_string() {
+    let s1 = String::from("Hello World!");
+    print_string(&s1);
+    println!("{}", s1);
+}
+fn print_string(s2: &String) {
+    println!("{}", s2)
+}
+fn main() {
+    create_string();
+}
+
+```
+
+### Vectors
+- Vectors allow you to store more than one value in a single data structure that puts all the values next to each other in memory.
+- You can initialize vector by vec! (vector macro also)
+- 
+
+```
+fn main() {
+    let mut v = Vec::new();
+    v.push(1);
+    v.push(2);
+    v.push(3);
+    println!("{:?}", v);
+}
+```
+```
+fn main() {
+    let mut v = Vec::new();
+    // v.push(1);
+    // v.push(2);
+    // v.push(3);
+    // v.push(4);
+    // v.push(5);
+    // v.push(6);
+    // v.push(7);
+    // v.push(8);
+    v = vec![1, 2, 3, 4, 5, 6, 7, 8];
+    println!("{:?}", v);
+    println!("{:?}", even_filter(v));
+}
+
+fn even_filter(vec: Vec<i32>) -> Vec<i32> {
+    let mut new_vec = Vec::new();
+    for val in vec {
+        if val % 2 == 0 {
+            new_vec.push(val);
+        }
+    }
+    return new_vec;
+}
+
+```
+- Another approach
+```
+
+```
