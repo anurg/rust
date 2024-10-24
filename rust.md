@@ -430,40 +430,115 @@ fn main() {
 }
 ```
 
-### Iterators
+### Reference & Dereference
+- Dereferencing
+The process of accessing/manipulating data that is being referred to by a reference (i.e. &i32) is called dereferencing.
+
+References are used to access/manipulate data in two ways:
+
+Access to the referred data during assignment of variables.
+Access to fields or methods of the referred data.
+Rust has some powerful operators that allow us to do this.
+- The & operator (reference):
+Creates a reference/pointer to a value
+Allows borrowing without taking ownership
+
+```
+let x = 5;          // Regular variable
+let y = &x;         // y is a reference to x
+println!("x: {}, y: {}", x, *y);  // Need to dereference y to get its value
+```
+### Question- In this example, if I remove dereference, still y prints the value as 5 so whats the use of *?     
+ - this is a common source of confusion in Rust! The reason you can print y without an explicit dereference is because Rust's println! macro and the Display/Debug traits handle references automatically through a feature called "auto-dereferencing." However, this automatic behavior doesn't work in all contexts.
+Let me demonstrate when you actually need the explicit dereference (*):
+```
+let x = 5;
+let y = &x;
+
+// These both print "5" due to println!'s automatic dereferencing
+println!("x: {}, y: {}", x, y);
+println!("x: {}, y: {}", x, *y);
+
+// But in these cases, you MUST use explicit dereferencing:
+
+// 1. Arithmetic operations
+let z = *y + 2;  // Works
+// let z = y + 2;  // Error! Can't add a reference to an integer
+
+// 2. Comparisons with non-reference values
+if *y == 5 { }  // Works
+// if y == 5 { }  // Error! Can't compare reference with integer
+
+// 3. Assigning to new variables
+let a: i32 = *y;  // Works
+// let a: i32 = y;  // Error! Can't assign reference to i32
+
+// 4. Function calls that expect the actual value
+fn takes_i32(num: i32) { }
+takes_i32(*y);  // Works
+// takes_i32(y);  // Error! Function expects i32, not &i32
+```
+###  Think of it like this:
+- y is like an address/pointer to where x is stored
+- *y is explicitly saying "go to that address and get me the value"
+- Some Rust features (like println!) automatically follow that address for convenience
+- But in most other cases, you need to be explicit about following the address with *
+
+- The * operator (dereference):
+Accesses the value a reference points to
+"Follows" the pointer to get the actual value
+```
+let a = 10;         // Regular variable
+let b = &a;         // Reference to a
+let c = *b;         // Dereference b to get a's value
+println!("c: {}", c); // Prints: 10
 ```
 
+### Iterators
+- Iterating using for loops
+```
 fn main() {
-    let nums= vec![1,2,3,4,5];
-    for val in nums {
-        println!("{:?}",val);
+    let vec = vec![1, 2, 3, 4, 5, 6, 7];
+    for val in vec {
+        println!("{}", val); //`vec` moved due to this implicit call to `.into_iter()`
     }
+    // println!("{:?}", vec);
 }
 ```
+- Iterating after creating an Iterator
+- Iterators are lazy. Just defining them has no effect until you call the methods which consume the iterator.
+- iter methos iterates over a collection by Borrowing them.
+- You cannot mutate the elements as you have immutable reference to internal elements.
 ```
-
 fn main() {
-    let nums= vec![1,2,3,4,5];
-    let iter = nums.iter();
+    let vec = vec![1, 2, 3, 4, 5, 6, 7];
+    let iter = vec.iter();
     for val in iter {
-        println!("{:?}",val);
+        println!("{}", val); 
     }
-    println!("{:?}",nums);
+    println!("{:?}", vec);
+    // for new_val in iter {   //use of moved value: `iter`
+    //     println!("{}", new_val);
+    // }
 }
 ```
 ### Mutable Iterators (iter_mut)
 ```
 fn main() {
-    let mut nums= vec![1,2,3,4,5];
-    let iter = nums.iter_mut();
-    for val in iter {
-        *val = *val * 2;
+    let mut vec = vec![1, 2, 3, 4, 5, 6, 7];
+    let iter_mut = vec.iter_mut();
+
+    for val in iter_mut {
+        println!("{}", val);
+        *val = *val * 3;
+        println!("{}", val);
     }
-    println!("{:?}",nums);
+    println!("{:?}", vec);
 }
 ```
 ### Iterate using .next
 ```
 
 ```
+
 
