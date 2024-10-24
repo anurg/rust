@@ -522,7 +522,7 @@ fn main() {
     // }
 }
 ```
-### Mutable Iterators (iter_mut)
+### Mutable Iterators (IterMut)
 ```
 fn main() {
     let mut vec = vec![1, 2, 3, 4, 5, 6, 7];
@@ -538,7 +538,136 @@ fn main() {
 ```
 ### Iterate using .next
 ```
+fn main() {
+    let vec = vec![1, 2, 3, 4, 5, 6, 7];
+    let mut iter = vec.iter();
+    while let Some(val) = iter.next() {
+        println!("{}", val);
+    }
+}
+```
+### The while let pattern is particularly useful when you need to:
 
+- Process a sequence of values
+- Don't know how many items you'll process in advance
+- Want to stop when a certain pattern no longer matches
+- Want cleaner code than a loop with match
+### Alternative to While..let
+```
+fn main() {
+    let vec = vec![1, 2, 3, 4, 5, 6, 7];
+    let mut iter = vec.iter();
+
+    // while let Some(val) = iter.next() {
+    //     println!("{}", val);
+    // }
+    loop {
+        match iter.next() {
+            Some(val) => println!("{}", val),
+            None => break,
+        }
+    }
+}
+```
+### into_iter
+- This iterator takes the ownership of the collection.
+- It is use when you don't need original collection 
+- Also it is useful when you need to squeeze the performance benefits by transfering ownership(by avoiding reference.)
+```
+fn main() {
+    let vec = vec![1, 2, 3, 4, 5, 6, 7];
+    for val in vec.into_iter() {
+        println!("{}", val);
+    }
+    // println!("{:?}", vec); //borrow of moved value:
+}
+```
+### Difference in Iterators
+![Iterators_Image](images/iterators.jpg)
+
+### Consuming Adapters
+- methods are called consuming adapters because calling them uses up the iterator.You cannot use iterator again. 
+- Doesn't consume the collection
+```
+fn main() {
+    let vec = vec![1, 2, 3, 4, 5, 6];
+    let v1_iter = vec.iter();
+
+    let total: i32 = v1_iter.sum();
+    println!("The total is : {}", total);
+    println!("{:?}", vec);
+    // let sum1: i32 = v1_iter.sum(); 
+}
 ```
 
+### Iterative Adapters
+- methods called on iterators which does not consume iterators but produce different iterators by changing some aspect of the original adapter.
+### map
+```
+fn main() {
+    let vec = vec![1, 2, 3, 4, 5, 6];
+    let v1_iter = vec.iter();
+    let v2_iter = v1_iter.map(|x| *x * 2);
+    for val in v2_iter {
+        println!("{}", val);
+    }
+    println!("{:?}", vec);
+    // let sum1: i32 = v1_iter.sum();
+}
+```
+### filter
+```
+fn main() {
+    let vec = vec![1, 2, 3, 4, 5, 6, 7];
+    let iter = vec.iter();
+    let iter1 = iter.filter(|x| **x % 2 != 0);
+    for val in iter1 {
+        println!("{}", val);
+    }
+}
+```
+### Chaining 
+```
+fn main() {
+    let vec = vec![1, 2, 3, 4, 5, 6, 7];
+    let iter = vec.iter();
+    let iter1 = iter.filter(|x| **x % 2 != 0).map(|x| *x * 2);
+    for val in iter1 {
+        println!("{}", val);
+    }
+}
+```
+### Collecting back the values from Iterator to Vector
+```
+fn main() {
+    let vec = vec![1, 2, 3, 4, 5, 6, 7];
+    let iter = vec.iter();
+    let iter1 = iter.filter(|x| **x % 2 != 0).map(|x| *x * 2);
+    // for val in iter1 {
+    //     println!("{}", val);
+    // }
+    let x: Vec<i32> = iter1.collect();
+    println!("{:?}", x);
+}
+```
+### Iterators in HashMaps
+```
+use std::collections::HashMap;
+fn main() {
+    let mut hm = HashMap::new();
+    hm.insert("Person1", 50);
+    hm.insert("Person2", 25);
+    hm.insert("Person3", 30);
+    println!("{:?}", hm);
+    // Example1- Iterating over hashmap
+    // for (ky, vl) in hm {
+    //     println!("Key: {}, Value: {}", ky, vl);
+    // }
+    //Example2- Iterating over mutable reference
+    for (key, val) in hm.iter_mut() {
+        *val = *val + 5;
+    }
+    println!("{:?}", hm);
+}
+```
 
