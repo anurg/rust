@@ -671,3 +671,46 @@ fn main() {
 }
 ```
 
+### Strings & Slices
+
+```
+fn main() {
+    let str = String::from("Anurag Bhatt");
+    let result = first_word(str);
+    println!("{}", result);
+}
+
+fn first_word(str: String) -> String {
+    let mut new_str = String::from("");
+    for char in str.chars() {
+        if char == ' ' {
+            break;
+        }
+        new_str.push(char);
+    }
+    return new_str;
+}
+```
+- The problem with this code is that it takes double the memory for str & new_str variables.
+- If the str String gets cleared, still new_str String has "Anurag" value in it.
+- What we want is the View over original String and not copy it over.
+- Modified code with slices
+```
+fn main() {
+    let str = String::from("Anurag Bhatt");
+    let result = find_first_word(&str);
+    println!("{}", result);
+}
+
+fn find_first_word(my_str: &String) -> &str {
+    let mut index = 0;
+    for (i, char) in my_str.chars().enumerate() {
+        if char == ' ' {
+            break;
+        }
+        // index = index + 1;
+        index = i;
+    }
+    return &my_str[0..index];
+}
+```
