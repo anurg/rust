@@ -714,3 +714,31 @@ fn find_first_word(my_str: &String) -> &str {
     return &my_str[0..index];
 }
 ```
+### Visibility and Privacy
+By default, everything is private, with two exceptions: Associated items in a pub Trait are public by default; Enum variants in a pub enum are also public by default. When an item is declared as pub, it can be thought of as being accessible to the outside world. 
+
+```
+// Declare a private struct
+struct Foo;
+
+// Declare a public struct with a private field
+pub struct Bar {
+    field: i32,
+}
+
+// Declare a public enum with two public variants
+pub enum State {
+    PubliclyAccessibleState,
+    PubliclyAccessibleState2,
+}
+```
+With the notion of an item being either public or private, Rust allows item accesses in two cases:
+
+- If an item is public, then it can be accessed externally from some module m if you can access all the item’s ancestor modules from m. You can also potentially be able to name the item through re-exports. See below.
+- If an item is private, it may be accessed by the current module and its descendants.
+These two cases are surprisingly powerful for creating module hierarchies exposing public APIs while hiding internal implementation details. 
+### Modules
+A module is a container for zero or more items.
+
+A module item is a module, surrounded in braces, named, and prefixed with the keyword mod. A module item introduces a new, named module into the tree of modules making up a crate. Modules can nest arbitrarily.
+
