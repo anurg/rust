@@ -1,17 +1,9 @@
 fn main() {
-    let str = String::from("Anurag Bhatt");
-    let result = find_first_word(&str);
-    println!("{}", result);
-}
+    let s3 = String::from("Hello World!");
+    {
+        let s4 = &s3;
 
-fn find_first_word(my_str: &String) -> &str {
-    let mut index = 0;
-    for (i, char) in my_str.chars().enumerate() {
-        if char == ' ' {
-            break;
-        }
-        // index = index + 1;
-        index = i;
+        println!("{}", s4);
     }
-    return &my_str[0..index];
+    println!("{}", s3);
 }
