@@ -1,9 +1,26 @@
-fn main() {
-    let s3 = String::from("Hello World!");
-    {
-        let s4 = &s3;
+trait Summary {
+    fn summarize(&self) -> String;
+}
 
-        println!("{}", s4);
+struct Article {
+    headlines: String,
+    content: String,
+}
+impl Summary for Article {
+    fn summarize(&self) -> String {
+        format!("{} ...", &self.content[0..50])
     }
-    println!("{}", s3);
+}
+fn main() {
+    let article = Article {
+        headlines: String::from("New AI Model"),
+        content: String::from(
+            "New AI Model--Lorem Ipsum,New AI Model--Lorem Ipsum,
+        New AI Model--Lorem Ipsum,New AI Model--Lorem Ipsum,New AI Model--Lorem Ipsum,
+        New AI Model--Lorem Ipsum,New AI Model--Lorem Ipsum,New AI Model--Lorem Ipsum,New AI 
+        Model--Lorem Ipsum,New AI Model--Lorem Ipsum,",
+        ),
+    };
+    println!("{}", article.headlines);
+    println!("{}", article.summarize());
 }
