@@ -1,26 +1,18 @@
-trait Summary {
-    fn summarize(&self) -> String;
-}
-
-struct Article {
-    headlines: String,
-    content: String,
-}
-impl Summary for Article {
-    fn summarize(&self) -> String {
-        format!("{} ...", &self.content[0..50])
+fn longest<'a>(x: &'a str, y: &'a str) -> &'a str {
+    if x.len() > y.len() {
+        x
+    } else {
+        y
     }
 }
 fn main() {
-    let article = Article {
-        headlines: String::from("New AI Model"),
-        content: String::from(
-            "New AI Model--Lorem Ipsum,New AI Model--Lorem Ipsum,
-        New AI Model--Lorem Ipsum,New AI Model--Lorem Ipsum,New AI Model--Lorem Ipsum,
-        New AI Model--Lorem Ipsum,New AI Model--Lorem Ipsum,New AI Model--Lorem Ipsum,New AI 
-        Model--Lorem Ipsum,New AI Model--Lorem Ipsum,",
-        ),
-    };
-    println!("{}", article.headlines);
-    println!("{}", article.summarize());
+    let string1 = String::from("Long string is long");
+    let result;
+    {
+        let string2 = String::from("short");
+        result = longest(string1.as_str(), string2.as_str()); // Error occurs
+    } // string2 goes out of scope here, but result still holds a reference
+
+    println!("The longest string is: {}", result); // Trying to use result
+    
 }
