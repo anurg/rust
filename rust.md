@@ -430,40 +430,343 @@ fn main() {
 }
 ```
 
+### Reference & Dereference
+- Dereferencing
+The process of accessing/manipulating data that is being referred to by a reference (i.e. &i32) is called dereferencing.
+
+References are used to access/manipulate data in two ways:
+
+Access to the referred data during assignment of variables.
+Access to fields or methods of the referred data.
+Rust has some powerful operators that allow us to do this.
+- The & operator (reference):
+Creates a reference/pointer to a value
+Allows borrowing without taking ownership
+
+```
+let x = 5;          // Regular variable
+let y = &x;         // y is a reference to x
+println!("x: {}, y: {}", x, *y);  // Need to dereference y to get its value
+```
+### Question- In this example, if I remove dereference, still y prints the value as 5 so whats the use of *?     
+ - this is a common source of confusion in Rust! The reason you can print y without an explicit dereference is because Rust's println! macro and the Display/Debug traits handle references automatically through a feature called "auto-dereferencing." However, this automatic behavior doesn't work in all contexts.
+Let me demonstrate when you actually need the explicit dereference (*):
+```
+let x = 5;
+let y = &x;
+
+// These both print "5" due to println!'s automatic dereferencing
+println!("x: {}, y: {}", x, y);
+println!("x: {}, y: {}", x, *y);
+
+// But in these cases, you MUST use explicit dereferencing:
+
+// 1. Arithmetic operations
+let z = *y + 2;  // Works
+// let z = y + 2;  // Error! Can't add a reference to an integer
+
+// 2. Comparisons with non-reference values
+if *y == 5 { }  // Works
+// if y == 5 { }  // Error! Can't compare reference with integer
+
+// 3. Assigning to new variables
+let a: i32 = *y;  // Works
+// let a: i32 = y;  // Error! Can't assign reference to i32
+
+// 4. Function calls that expect the actual value
+fn takes_i32(num: i32) { }
+takes_i32(*y);  // Works
+// takes_i32(y);  // Error! Function expects i32, not &i32
+```
+###  Think of it like this:
+- y is like an address/pointer to where x is stored
+- *y is explicitly saying "go to that address and get me the value"
+- Some Rust features (like println!) automatically follow that address for convenience
+- But in most other cases, you need to be explicit about following the address with *
+
+- The * operator (dereference):
+Accesses the value a reference points to
+"Follows" the pointer to get the actual value
+```
+let a = 10;         // Regular variable
+let b = &a;         // Reference to a
+let c = *b;         // Dereference b to get a's value
+println!("c: {}", c); // Prints: 10
+```
+
 ### Iterators
+- Iterating using for loops
 ```
-
 fn main() {
-    let nums= vec![1,2,3,4,5];
-    for val in nums {
-        println!("{:?}",val);
+    let vec = vec![1, 2, 3, 4, 5, 6, 7];
+    for val in vec {
+        println!("{}", val); //`vec` moved due to this implicit call to `.into_iter()`
     }
+    // println!("{:?}", vec);
 }
 ```
+- Iterating after creating an Iterator
+- Iterators are lazy. Just defining them has no effect until you call the methods which consume the iterator.
+- iter methos iterates over a collection by Borrowing them.
+- You cannot mutate the elements as you have immutable reference to internal elements.
 ```
-
 fn main() {
-    let nums= vec![1,2,3,4,5];
-    let iter = nums.iter();
+    let vec = vec![1, 2, 3, 4, 5, 6, 7];
+    let iter = vec.iter();
     for val in iter {
-        println!("{:?}",val);
+        println!("{}", val); 
     }
-    println!("{:?}",nums);
+    println!("{:?}", vec);
+    // for new_val in iter {   //use of moved value: `iter`
+    //     println!("{}", new_val);
+    // }
 }
 ```
-### Mutable Iterators (iter_mut)
+### Mutable Iterators (IterMut)
 ```
 fn main() {
-    let mut nums= vec![1,2,3,4,5];
-    let iter = nums.iter_mut();
-    for val in iter {
-        *val = *val * 2;
+    let mut vec = vec![1, 2, 3, 4, 5, 6, 7];
+    let iter_mut = vec.iter_mut();
+
+    for val in iter_mut {
+        println!("{}", val);
+        *val = *val * 3;
+        println!("{}", val);
     }
-    println!("{:?}",nums);
+    println!("{:?}", vec);
 }
 ```
 ### Iterate using .next
 ```
+fn main() {
+    let vec = vec![1, 2, 3, 4, 5, 6, 7];
+    let mut iter = vec.iter();
+    while let Some(val) = iter.next() {
+        println!("{}", val);
+    }
+}
+```
+### The while let pattern is particularly useful when you need to:
 
+- Process a sequence of values
+- Don't know how many items you'll process in advance
+- Want to stop when a certain pattern no longer matches
+- Want cleaner code than a loop with match
+### Alternative to While..let
+```
+fn main() {
+    let vec = vec![1, 2, 3, 4, 5, 6, 7];
+    let mut iter = vec.iter();
+
+    // while let Some(val) = iter.next() {
+    //     println!("{}", val);
+    // }
+    loop {
+        match iter.next() {
+            Some(val) => println!("{}", val),
+            None => break,
+        }
+    }
+}
+```
+### into_iter
+- This iterator takes the ownership of the collection.
+- It is use when you don't need original collection 
+- Also it is useful when you need to squeeze the performance benefits by transfering ownership(by avoiding reference.)
+```
+fn main() {
+    let vec = vec![1, 2, 3, 4, 5, 6, 7];
+    for val in vec.into_iter() {
+        println!("{}", val);
+    }
+    // println!("{:?}", vec); //borrow of moved value:
+}
+```
+### Difference in Iterators
+![Iterators_Image](images/iterators.jpg)
+
+### Consuming Adapters
+- methods are called consuming adapters because calling them uses up the iterator.You cannot use iterator again. 
+- Doesn't consume the collection
+```
+fn main() {
+    let vec = vec![1, 2, 3, 4, 5, 6];
+    let v1_iter = vec.iter();
+
+    let total: i32 = v1_iter.sum();
+    println!("The total is : {}", total);
+    println!("{:?}", vec);
+    // let sum1: i32 = v1_iter.sum(); 
+}
 ```
 
+### Iterative Adapters
+- methods called on iterators which does not consume iterators but produce different iterators by changing some aspect of the original adapter.
+### map
+```
+fn main() {
+    let vec = vec![1, 2, 3, 4, 5, 6];
+    let v1_iter = vec.iter();
+    let v2_iter = v1_iter.map(|x| *x * 2);
+    for val in v2_iter {
+        println!("{}", val);
+    }
+    println!("{:?}", vec);
+    // let sum1: i32 = v1_iter.sum();
+}
+```
+### filter
+```
+fn main() {
+    let vec = vec![1, 2, 3, 4, 5, 6, 7];
+    let iter = vec.iter();
+    let iter1 = iter.filter(|x| **x % 2 != 0);
+    for val in iter1 {
+        println!("{}", val);
+    }
+}
+```
+### Chaining 
+```
+fn main() {
+    let vec = vec![1, 2, 3, 4, 5, 6, 7];
+    let iter = vec.iter();
+    let iter1 = iter.filter(|x| **x % 2 != 0).map(|x| *x * 2);
+    for val in iter1 {
+        println!("{}", val);
+    }
+}
+```
+### Collecting back the values from Iterator to Vector
+```
+fn main() {
+    let vec = vec![1, 2, 3, 4, 5, 6, 7];
+    let iter = vec.iter();
+    let iter1 = iter.filter(|x| **x % 2 != 0).map(|x| *x * 2);
+    // for val in iter1 {
+    //     println!("{}", val);
+    // }
+    let x: Vec<i32> = iter1.collect();
+    println!("{:?}", x);
+}
+```
+### Iterators in HashMaps
+```
+use std::collections::HashMap;
+fn main() {
+    let mut hm = HashMap::new();
+    hm.insert("Person1", 50);
+    hm.insert("Person2", 25);
+    hm.insert("Person3", 30);
+    println!("{:?}", hm);
+    // Example1- Iterating over hashmap
+    // for (ky, vl) in hm {
+    //     println!("Key: {}, Value: {}", ky, vl);
+    // }
+    //Example2- Iterating over mutable reference
+    for (key, val) in hm.iter_mut() {
+        *val = *val + 5;
+    }
+    println!("{:?}", hm);
+}
+```
+
+### Strings & Slices
+
+```
+fn main() {
+    let str = String::from("Anurag Bhatt");
+    let result = first_word(str);
+    println!("{}", result);
+}
+
+fn first_word(str: String) -> String {
+    let mut new_str = String::from("");
+    for char in str.chars() {
+        if char == ' ' {
+            break;
+        }
+        new_str.push(char);
+    }
+    return new_str;
+}
+```
+- The problem with this code is that it takes double the memory for str & new_str variables.
+- If the str String gets cleared, still new_str String has "Anurag" value in it.
+- What we want is the View over original String and not copy it over.
+- Modified code with slices
+```
+fn main() {
+    let str = String::from("Anurag Bhatt");
+    let result = find_first_word(&str);
+    println!("{}", result);
+}
+
+fn find_first_word(my_str: &String) -> &str {
+    let mut index = 0;
+    for (i, char) in my_str.chars().enumerate() {
+        if char == ' ' {
+            break;
+        }
+        // index = index + 1;
+        index = i;
+    }
+    return &my_str[0..index];
+}
+```
+### Visibility and Privacy
+By default, everything is private, with two exceptions: Associated items in a pub Trait are public by default; Enum variants in a pub enum are also public by default. When an item is declared as pub, it can be thought of as being accessible to the outside world. 
+
+```
+// Declare a private struct
+struct Foo;
+
+// Declare a public struct with a private field
+pub struct Bar {
+    field: i32,
+}
+
+// Declare a public enum with two public variants
+pub enum State {
+    PubliclyAccessibleState,
+    PubliclyAccessibleState2,
+}
+```
+With the notion of an item being either public or private, Rust allows item accesses in two cases:
+
+- If an item is public, then it can be accessed externally from some module m if you can access all the item’s ancestor modules from m. You can also potentially be able to name the item through re-exports. See below.
+- If an item is private, it may be accessed by the current module and its descendants.
+These two cases are surprisingly powerful for creating module hierarchies exposing public APIs while hiding internal implementation details. 
+### Modules
+A module is a container for zero or more items.
+
+A module item is a module, surrounded in braces, named, and prefixed with the keyword mod. A module item introduces a new, named module into the tree of modules making up a crate. Modules can nest arbitrarily.
+
+```
+trait Summary {
+    fn summarize(&self) -> String;
+}
+
+struct Article {
+    headlines: String,
+    content: String,
+}
+impl Summary for Article {
+    fn summarize(&self) -> String {
+        format!("{} ...", &self.content[0..50])
+    }
+}
+fn main() {
+    let article = Article {
+        headlines: String::from("New AI Model"),
+        content: String::from(
+            "New AI Model--Lorem Ipsum,New AI Model--Lorem Ipsum,
+        New AI Model--Lorem Ipsum,New AI Model--Lorem Ipsum,New AI Model--Lorem Ipsum,
+        New AI Model--Lorem Ipsum,New AI Model--Lorem Ipsum,New AI Model--Lorem Ipsum,New AI 
+        Model--Lorem Ipsum,New AI Model--Lorem Ipsum,",
+        ),
+    };
+    println!("{}", article.headlines);
+    println!("{}", article.summarize());
+}
+```
