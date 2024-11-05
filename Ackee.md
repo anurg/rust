@@ -70,12 +70,87 @@ The mint account may include a freeze_authority, allowing it to invoke FreezeAcc
 ### Wrapping SOL
 SOL can be wrapped and used like a Token program token when interacting with programs that use the Token program's interface. Accounts that hold wrapped SOL are associated with Native Mint. Wrapped SOL token accounts have unique behaviors, which you can learn more about here.
 
+### Mint Account
+The mint account represents a specific type of token by storing the token's global metadata. The mint account contains these data fields:
+
+- Supply: Total supply of the token.
+- Decimals: The number of decimal places the token can be divided into.
+- Mint authority: The account authorized to mint new tokens. (Optional)
+- Freeze authority: The account authorized to freeze token transfers. (Optional)
+
+### Token Account
+A token account on Solana is a general term for any account that holds tokens. Token accounts are created by the Token program and store different types of tokens. Every account has a unique mint address, and a token account holds tokens of a specific mint account.
+
+The Token program is the owner of a token account. However, another account can be specified as the authority with the ability to transfer tokens. This means that while the Token program manages the structure of the token account, another account controls the movement of tokens.
+
+![Solana_Token_Account](images/solana4.png)
+
+### Token Account Structure
+The structure of a token account resembles that of a regular account. It holds lamports, has an executable flag (set to false), owner (Token Program) and stores additional data.
+
+These data fields provide enhanced account management features. For example, you can specify a delegate account, which can then spend tokens up to a delegated_amount.
+
+Main fields:
+
+- Mint: The type of token the account holds.
+- Owner: The account with authority to transfer the tokens.
+- Amount: The number of tokens the account holds.
+Additional fields:
+
+- Delegate: Delegate authority having possession over delegate amount. (Optional)
+- IsNative: Specifies whether the token account holds wrapped SOL. (Optional)
+- Delegate amount: Amount authorized by the delegate authority.
+- Close authority: Authority able to close the token account. (Optional)
+
 ### Associated Token Account
 - An Associated Token Account (ATA) is a token account, but its address has a special property.
 - An Associated Token Account address is derived (as a PDA) from its owner's wallet address and the address of the mint.
 - This means that user has a different ATA for every wallet and token mint combination. This is very convenient because programs can easily find and interact with the correct account without needing the user to provide the address.
 - A user can receive tokens even if they do not yet have a token account for that mint. The sender is able to fund the creation of the receiver's ATA, enabling things like airdrop campaigns.
 - Associated Token Account program facilitates the creation and management of ATAs.
+
+### Token-2022
+The Token-2022 program extends the functionality provided by the Token program. This means that the Token-2022 program is not only backward compatible but also includes all the functions of the original Token program, as well as additional functionality often referred to as token extensions.
+
+### Benefits
+- Flexibility
+Some token extension are incompatible, however, you can create a variety of custom combinations that fit your needs.
+
+- Reduced risk
+Using audited and well-tested extensions helps protect protocols and funds.
+
+- Reduced testing costs
+Extensions are added by specifying the extensions in code, this reduces number of errors and saves time on testing.
+
+- Reduced development time
+Extensions are uniform and reusable, which significantly speeds up development.
+
+### Extensions
+There are two types of extensions:
+- Mint Extensions
+- Token Account Extensions
+
+- Mint extensions are added on top of the original Solana Token program and extend the capabilities of tokens.
+- Token account extensions are added on top of Solana accounts and add account-related features.
+
+### Mint extensions:
+
+- Confidential transfers: Confidential transactions that do not reveal the amount transferred.
+- Transfer fees: Collection of fees on each transfer. The fees are then sent to a specified account.
+- Mint close authority: Enables mint owners to close their accounts and reclaim the lamports.
+- Transfer hook: Calls specific programs when a token transfer occurs.
+- Interest-bearing tokens: Set an interest rate on a token. The interest can be tracked and displayed.
+- Non-transferable tokens: Restrict token transfers between users.
+- Permanent delegate: Permanently assign a delegate that has the authority to manage token accounts of a given mint.
+- Metadata pointer: Allows token creators to link an external address that contains the official metadata of the token.
+- Metadata: Allows integration of metadata into tokens through custom fields.
+
+### Token account extensions include:
+
+- Memo required on transfer: Requires an attached memo as a message during each token transfer.
+- Immutable owner: Makes it impossible to reassign ownership of an account.
+- Default account state: Freezes all new token accounts so that users must interact with the project in some way to unfreeze the accounts/tokens.
+- CPI guard: Restricts how other programs can interact with your token by prohibiting certain actions inside cross-program invocations.
 
 ### What is a Transaction?
 - Transactions are sent to interact with the Solana Network.
@@ -157,6 +232,29 @@ console.log(
 );
 
 ```
+
+### Account Compression
+### Merkle Tree
+A Merkle tree is a data structure that organizes data into a tree-like form.
+
+Each leaf node inside this tree represents a hash of some data.
+Each non-leaf node represents a hash of its child nodes.
+The root is a compact representation of all data stored in the tree. Merkle trees allows us to easily verify integrity of the data without having to store all of it on-chain.
+
+Tree Terminology
+![Solana_Merkle_Tree](images/solana_merkle_tree.png)
+
+### Account Compression Program
+Minting a single NFT may be relatively inexpensive, however, the cost of storing the asset's data on-chain can quickly become uneconomical as the quantity increases.
+
+The Account Compression program is an on-chain system designed to address the rising concern of storage costs on Solana.
+
+The solution lies in storing a compressed hash of the asset data on-chain, while the actual data is stored off-chain in a database. The data is split into pieces, a Merkle tree is built and only the Merkle root is stored on-chain.
+
+### Zero-Knowledge Compression
+- Zero-knowledge (ZK) proofs allow one party to prove to another party that some statement is true without revealing any information about the statement itself.
+- ZK proofs can be used to further reduce the amount of data that needs to be stored on a blockchain. With ZK proofs, we can verify that certain calculations or balances are correct without needing to store or reveal the underlying data.
+
 
 ### Anchor Program
 An Anchor program consists of three parts. The program module, the Accounts structs 
