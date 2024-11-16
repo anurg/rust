@@ -1,18 +1,19 @@
-fn longest<'a>(x: &'a str, y: &'a str) -> &'a str {
-    if x.len() > y.len() {
-        x
-    } else {
-        y
-    }
+use std::fs::read_to_string;
+use std::io::Error;
+use std::path::Path;
+fn read_file_content(file: &Path) -> Result<String, Error> {
+    let result = read_to_string(file)?;
+    Ok(result)
+}
+fn read_file_content_unwrap(file: &str) -> String {
+    read_to_string(file).unwrap()
 }
 fn main() {
-    let string1 = String::from("Long string is long");
-    let result;
-    {
-        let string2 = String::from("short");
-        result = longest(string1.as_str(), string2.as_str()); // Error occurs
-    } // string2 goes out of scope here, but result still holds a reference
-
-    println!("The longest string is: {}", result); // Trying to use result
-    
+    let file_path = Path::new("./src/file.txt");
+    match read_file_content(file_path) {
+        Ok(content) => println!("{}", content),
+        Err(e) => println!("Error Message: {}", e),
+    }
+    println!("{}", read_file_content_unwrap("file.txt"));
+    println!("Current Working Directory: {:?} ", std::env::current_dir());
 }
