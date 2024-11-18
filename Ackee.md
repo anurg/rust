@@ -313,3 +313,36 @@ invoke_signed - Calling program needs PDAs to act as signers during the CPI.
 ### Solana Program Library
 The Solana Program Library (SPL) is a collection of on-chain programs. These programs facilitate tasks like creation and management of tokens and more.
 
+
+### Program Derived Addresses (PDAs): Solana's Key-Value Store #
+Data for Solana programs are stored in program-derived addresses (PDAs). Solana's PDAs can be thought of as a key/value store. A PDA can be designed to store any form of data as required by the program.
+
+### Key Concepts #
+### Structure
+
+- Key: The PDA's address
+- Value: Data stored in the account at that address
+
+###Address Generation
+
+- Seed: chosen by the programmer
+- Bump: An additional value to ensure unique PDA creation
+- Deterministic: Same combination of seed and bump always produce the same address. This helps the program and the client to accurately determine the address of the data.
+
+### Data Storage
+
+- Programmers define the structure of data stored in PDAs
+- Can store any type of program-specific information
+
+### Some properties:
+
+- PDAs are off the Ed25519 elliptic curve. While the data type web3.js uses is a PublicKey, PDA addresses are not public keys and do not have a matching private key.
+- A program's PDAs are unique so, they won't conflict with other programs.
+- PDAs can also act as signer in an instruction. 
+
+### Benefits #
+- Uniqueness: PDAs are specific to your program, avoiding conflicts
+- Determinism: Consistent address generation across clients and on-chain programs
+- Flexibility: Can store various types of data structures
+- Efficiency: Quick lookup and access to program-specific data
+
