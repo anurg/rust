@@ -14,6 +14,7 @@ describe('journalapp Crud Test Cases', () => {
   anchor.setProvider(provider)
   // const payer = provider.wallet as anchor.Wallet
   const bob = anchor.web3.Keypair.generate();
+  const alice = anchor.web3.Keypair.generate();
   const bob_title = "Hello World!";
   const bob_title_long = "Hello World!Here is bob from Solana..Hello World!Here is bob from Solana..Hello World!Here is bob from Solana..";
   const bob_message = "Hello, This is bobs Initial journal entry."
@@ -36,8 +37,8 @@ describe('journalapp Crud Test Cases', () => {
       })
       .signers([bob])
       .rpc({ commitment: "confirmed" });
-      console.log(`The transaction id is : ${tx}`);
-      console.log(`journalbump: ${journalbump}`);
+      // console.log(`The transaction id is : ${tx}`);
+      // console.log(`journalbump: ${journalbump}`);
      await checkJournal(program,jounalAddress,bob.publicKey,bob_title,bob_message,journalbump);
   })
 
@@ -55,7 +56,7 @@ describe('journalapp Crud Test Cases', () => {
         // console.log(`The transaction id is : ${tx}`);
     } catch (error:any ) {
         should_fail = "Failed";
-        console.log(`error.message: ${error.message}`)
+        // console.log(`error.message: ${error.message}`)
         assert.strictEqual(error.message,"Max seed length exceeded");
     }
     assert.strictEqual(should_fail,"Failed")
@@ -77,6 +78,63 @@ describe('journalapp Crud Test Cases', () => {
         console.error(error.message);
     }
     await checkJournal(program,jounalAddress,bob.publicKey,bob_title,bob_message_new,journalbump);
+  })
+
+  it('Alice cannot update the Bobs Journal Message content', async () => {
+    await airdrop(provider.connection, alice.publicKey);
+    let should_fail = "This should Fail";
+    const [jounalAddress,journalbump] = getJournalAddress(bob_title,bob.publicKey,program.programId);
+    try { 
+       await program.methods
+        .updateJournalEntry(bob_title,bob_message_new)
+        .accounts({         
+          owner: bob.publicKey,
+        })
+        .signers([alice])
+        .rpc({ commitment: "confirmed" });
+    } catch (error:any ) {
+      should_fail = "Failed";
+      assert.strictEqual(error.message,`unknown signer: ${alice.publicKey}`);
+  }
+        assert.strictEqual(should_fail,"Failed")   
+  })
+
+  it('Bob can delete his Journal Entry', async () => {
+    const [journalAddress,journalbump] = getJournalAddress(bob_title,bob.publicKey,program.programId);
+    try {
+       await program.methods
+        .deleteJournalEntry(bob_title)
+        .accounts({         
+          owner: bob.publicKey,
+        })
+        .signers([bob])
+        .rpc({ commitment: "confirmed" });
+        // console.log(`The transaction id is : ${tx}`);
+    } catch (error:any ) {
+        console.error(error.message);
+    }
+    const accountInfo = await provider.connection.getAccountInfo(journalAddress);
+    console.log(accountInfo);
+    assert.strictEqual(accountInfo,null)
+  })
+
+  it('Alice cannot delete Bobs Journal Entry', async () => {
+    let should_fail = "This should Fail";
+    const [journalAddress,journalbump] = getJournalAddress(bob_title,bob.publicKey,program.programId);
+    try {
+       await program.methods
+        .deleteJournalEntry(bob_title)
+        .accounts({         
+          owner: bob.publicKey,
+        })
+        .signers([alice])
+        .rpc({ commitment: "confirmed" });
+
+    } catch (error:any ) {
+      should_fail = "Failed";
+        assert.strictEqual(error.message,`unknown signer: ${alice.publicKey}`);
+    }
+    assert.strictEqual(should_fail,"Failed")
   })
 })
 
