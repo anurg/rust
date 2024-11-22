@@ -12,6 +12,9 @@ pub mod journalapp {
         title: String,
         message: String,
     ) -> Result<()> {
+        msg!("Journal Entry Created");
+        msg!("Title: {}", title);
+        msg!("Message: {}", message);
         let journal_entry = &mut ctx.accounts.journal_entry;
         journal_entry.owner = *ctx.accounts.owner.key;
         // journal_entry.owner = ctx.accounts.owner.key();
