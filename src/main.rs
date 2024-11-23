@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 use core::fmt;
 use std::f64::consts::PI;
 
@@ -75,20 +74,6 @@ fn circle_example() {
     assert_eq!(res.err(), Some("Circle radius muct be greater than 0"));
     
 
-=======
-pub fn main() {
-    let hexadecimal = 0x10;
-    let octal = 0o10;
-    let binary = 0b10;
-    let mut n = 10;
-    println!("{}", n);
-    n = hexadecimal;
-    println!("{}", n);
-    n = octal;
-    println!("{}", n);
-    n = binary;
-    println!("{}", n);
->>>>>>> aa9c0199e4ad952cc8906b134ef30e6040aee81b
 }
 pub fn main() {
     circle_example();
